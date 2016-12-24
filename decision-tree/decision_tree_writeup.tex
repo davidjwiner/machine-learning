@@ -1,0 +1,198 @@
+%&latex
+\documentclass{report}
+
+%+Make Index
+\usepackage{makeidx}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pdfpages}
+\usepackage{array}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\usepackage{mathtools}
+\usepackage{dsfont}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\newcommand{\sectionbreak}{\clearpage}
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{max}}\;}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{arg}\,\operatorname{min}}\;}
+\newcommand{\leqm}{\stackrel{?}{\leq}}
+\newcommand{\geqm}{\stackrel{?}{\geq}}
+\renewcommand{\qedsymbol}{$\blacksquare$}
+\setlength{\parindent}{0pt}
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+} 
+\usepackage{graphicx}
+
+\begin{document}
+
+%+Title
+\title{\Huge\bf CS289A HW5: Decision tree}
+\author{David Winer}
+\maketitle
+%-Title
+
+%%%% PROBLEM 2 %%%
+\section*{Decision tree results}
+\subsection*{Spam}
+\subsubsection*{Training results}
+I did not add any additional features to the spam dataset. To create random forests, I sampled (with replacement) 90\% of the data. With trees of depth 10 and ensembling 10 trees in the random forest case, my prediction accuracies were:
+
+\begin{center}
+\begin{tabular} {|c | c | c |}
+\hline
+\textbf{Classifier} & \textbf{Metric} & \textbf{Score} \\
+\hline
+Decision tree & Training accuracy & 84.0\% \\
+\hline
+Decision tree & Validation accuracy & 81.4\% \\
+\hline
+Random forest & Training accuracy & 84.2\% \\
+\hline
+Random forest & Validation accuracy & 81.4\% \\
+\hline
+\end{tabular}
+\end{center}
+
+I decided to increase depth to see if I could get better accuracy. These were my results with depth 20 trees (still ensembling 10 trees in the random forest case):
+
+\begin{center}
+\begin{tabular} {|c | c | c |}
+\hline
+\textbf{Classifier} & \textbf{Metric} & \textbf{Score} \\
+\hline
+Decision tree & Training accuracy & 87.2\% \\
+\hline
+Decision tree & Validation accuracy & 81.4\% \\
+\hline
+Random forest & Training accuracy & 87.4\% \\
+\hline
+Random forest & Validation accuracy & 81.4\% \\
+\hline
+\end{tabular}
+\end{center}
+
+Unsurprisingly, training accuracy increased, but validation accuracy stayed the exact same in both cases. I concluded that, at least with the given features, it would be difficult for me to breach validation accuracy of $81-82\%$. 
+
+\subsubsection{Kaggle}
+
+My best Kaggle score was 0.78484 using a random forest of 10 trees of depth 20 each. 
+
+\subsubsection{Walking down the tree}
+
+I pulled the first example (index 0), which was a negative example and examined its path down the tree. It correctly classified this example based on the following path (note that $\leq0$ implies equality):
+
+\begin{itemize}
+\item ! $>$ 0
+\item meter $\leq$ 0
+\item \& $\leq$ 0
+\item money $\leq$ 0
+\item \$\ $\leq$ 1
+\item message $\leq$ 0
+\item prescription $\leq$ 0
+\item volumes $\leq$ 0
+\item ; $\leq$ 0
+\item pain $\leq$ 0
+\item ( $\leq$ 0
+\item \#\ $\leq$ 1
+\item other $\leq$ 1
+\item bracket $\leq$ 0
+\item business $\leq$ 1
+\end{itemize}
+
+\subsubsection{Most common root splits}
+In this case, the only split at the root among all my trees in my random forest was ! $>0$. I was surprised at this result, so I re-created my random forests while sampling less of the data (80\%, 50\%) and still got the same result. Evidently, exclamation points give us a lot of information!
+
+\subsection*{Census data} 
+
+\subsubsection*{Data processing}
+
+I started by importing the provided data using \texttt{pandas} and separating out the labels from the rest of the data. I was able to use \texttt{pandas}  to parse out the variables that were integers and those that were strings (the categorical variables). I then imputed the value of the unknown (\texttt{?}) variables by assigning each to be the mode of their respective dimensions. \newline
+
+
+Finally, I then converted the data into a Python dictionary with \texttt{pandas} and used \texttt{DictVectorizer} to vectorize the categorical variables.
+
+\subsubsection*{Training results}
+
+To create random forests, I sampled (with replacement) 90\% of the data. With trees of depth 10 and ensembling 5 trees in the random forest case, my prediction accuracies were:
+
+\begin{center}
+\begin{tabular} {|c | c | c |}
+\hline
+\textbf{Classifier} & \textbf{Metric} & \textbf{Score} \\
+\hline
+Decision tree & Training accuracy & 91.8\% \\
+\hline
+Decision tree & Validation accuracy & 84.3\% \\
+\hline
+Random forest & Training accuracy & 92.1\% \\
+\hline
+Random forest & Validation accuracy & 85.1\% \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Kaggle}
+
+My best Kaggle score was 0.85184\ using a random forest of 5 trees with depth 15 each. For this outcome, I\ decided to increase the level randomness in my forests and only sampled 50\%\ of the data for each tree.
+
+\subsubsection{Walking down the tree}
+
+I pulled the first example (index 0), which was a negative example and examined
+its path down the tree. It correctly classified this example based on the
+following path (note that $\leq0$ implies equality):
+
+\begin{itemize}
+\item marital-status=Married-civ-spouse $\leq$ 0
+\item capital-gain $\leq$ 6849
+\item education-num $\leq$ 12
+\item hours-per-week $>$ 40
+\item capital-loss $\leq$ 2205
+\item occupation=Handlers-cleaning $\leq$ 0
+\item marital-status=Never-married $>$ 0
+\item relationship=Not-in-family $>$ 0
+\item education-num $\leq$ 10
+\item workclass=Self-emp-not-inc $\leq$ 0
+\end{itemize}
+
+\subsubsection{Most common root splits}
+Again, I only found one split at the root among all my trees in my random
+forest: marital-status=Married-civ-spouse $>0$. I was surprised at this result, so I re-created my random
+forests while sampling less of the data (50\%) and still got the same
+result.
+
+\subsection*{Techniques used}
+\subsubsection{Decision trees}
+For my decision trees, I used fairly simple stopping criteria -- I continued to recurse down the tree, building more nodes unless the current node was pure (one class)\ or the current node was at a maximum depth value that I\ set (I learned from trial and error that on both datasets, I\ stopped gaining incremental validation accuracy after a depth of 15-20). The exact depth parameters I\ used in each case are listed above. \newline
+
+As explained above, I imputed missing attributes by taking the mode of their respective dimensions. \newline
+
+Finally, I\ cross validated on different parameters (mostly just tree depth) by setting aside 20\% of my data as a validation set and only training on the remaining 80\%.
+
+\subsubsection*{Random forests}
+I created randomness in my forests' trees by sampling a subset of my data to create the training set for each tree. I played with 50\%, 80\%, and 90\% of the data and found a small (1\%)\ jump in my accuracy from 50\% to 80\% and an almost insignificant jump ($<$0.5\%) from 80 to 90. \newline
+
+Additionally, for predicting a given example, I decided on which class to assign by taking the most commonly assigned class among my random forest trees.
+
+
+\end{document}
+
+
+
