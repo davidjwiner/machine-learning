@@ -11,7 +11,7 @@ Decision tree/random forest
 In this model, I built a generalized decision tree that can be used to make predictions on all kinds of datasets. The two problems that I tested it on were:
 
 * Spam prediction (~81% validation accuracy)
-* Census data prediction (binary indicator of wealth based on other factors like marital status, occupation, education level, etc. --- ~85% validation accuracy)
+* Census data prediction (binary indicator of wealth based on other factors like marital status, occupation, education level, etc. — ~85% validation accuracy)
 
 K-means
 -------
